@@ -115,15 +115,15 @@ elif [[ "${JOBS_ID}" == "2" ]]; then
       git checkout -b "$local_branch" "$remote_branch"
       git push origin "$local_branch"
       echo "Successfully pushed $local_branch to target"
-    else
-      if [[ "$local_branch" == "gh-pages" ]]; then
+    #else
+      #if [[ "$local_branch" == "gh-pages" ]]; then
         # Check if 'docs/' exists in the remote gh-pages tree
-        if ! git ls-tree --name-only origin/gh-pages | grep -q "^docs/"; then
-          git push origin --delete gh-pages
-          git push origin gh-pages
-          echo "Re-pushed local gh-pages with docs"
-        fi
-      fi
+        #if ! git ls-tree --name-only origin/gh-pages | grep -q "^docs/"; then
+          #echo "Re-pushed local gh-pages with docs"
+          #git push origin --delete gh-pages
+          #git push origin gh-pages
+        #fi
+      #fi
     fi
   done
 

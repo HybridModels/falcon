@@ -102,12 +102,12 @@ runs:
       uses: devcontainers/ci@v0.3
       id: artifact
       with:
-        push: always
         imageTag: id-${{ env.ID }}
         skipContainerUserIdUpdate: true
         runCmd: ls -alR /home/runner/_site
         imageName: ${{ inputs.image_name }}
         configFile: ${{ inputs.action_path }}/.devcontainer.json
+        push: ${{ env.RERUN_RUNNER == 'true' && 'always' || 'never' }}
         env: |
           CXX=clang++
           CC=clang

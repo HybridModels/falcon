@@ -45,19 +45,39 @@ if [[ -f /home/runner/config.sh ]]; then
         "https://api.github.com/${SCOPE}/${_PATH}/actions/runners/registration-token" \
         | jq -r '.token')"
 
-    # Register new URL    
-    cd /home/runner
-    ./svc.sh stop
-    ./svc.sh uninstall
-    ./config.sh remove
+    if [ -z "$RUNNER_TOKEN" ]; then
+        echo "Failed to get registration token"
+        exit 1
+    fi
+
+    # Change to runner directory
+    cd /home/runner || { echo "Failed to cd to /home/runner"; exit 1; }
+
+    # Stop the runner through supervisor
+    supervisorctl stop runner || true
+
+    # Forcefully remove old configuration
+    if [ -f .runner ]; then
+        echo "Forcefully removing old runner configuration"
+        rm -f .runner
+        rm -f .credentials
+        rm -f .credentials_rsaparams
+        rm -f .env
+    fi
+
+    # Register with new URL
     ./config.sh \
-        --url $RUNNER_URL \
-        --token $RUNNER_TOKEN \
-        --name $RUNNER_NAME \
-        --work $RUNNER_WORK_DIRECTORY \
+        --url "$RUNNER_URL" \
+        --token "$RUNNER_TOKEN" \
+        --name "$RUNNER_NAME" \
+        --work "$RUNNER_WORK_DIRECTORY" \
         $CONFIG_OPTS \
+        --replace \
         --unattended
-    ./svc.sh install
-    ./svc.sh start
+
+    # Restart the runner through supervisor
+    supervisorctl start runner
+
+    echo "Runner URL successfully updated to ${RUNNER_URL}"
 
 fi

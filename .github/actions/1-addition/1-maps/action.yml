@@ -140,12 +140,12 @@ runs:
     - name: 🚀 Initiate Lexer
       uses: devcontainers/ci@v0.3
       with:
-        push: always
+        runCmd: ls -al /
         skipContainerUserIdUpdate: true
         imageName: ${{ inputs.image_name }}
         imageTag: target-${{ github.run_number }}
         configFile: ${{ inputs.action_path }}/.devcontainer.json
-        runCmd: ls -al /
+        push: ${{ env.RERUN_RUNNER == 'true' && 'always' || 'never' }}
 
     - name: 💎 Variables
       id: variables
