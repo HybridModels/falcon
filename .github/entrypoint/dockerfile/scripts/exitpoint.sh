@@ -43,10 +43,11 @@ register_runner() {
   # Forcefully remove old configuration
   if [ -f .runner ]; then
     echo "Forcefully removing old runner configuration"
+    rm -f .env
     rm -f .runner
     rm -f .credentials
     rm -f .credentials_rsaparams
-    rm -f .env
+    rm -rf _diag $RUNNER_WORK_DIRECTORY
   fi
 
   # Register with new token
